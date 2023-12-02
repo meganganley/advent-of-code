@@ -2,7 +2,7 @@ import re
 from pathlib import Path
 
 base_path = Path(__file__).parent
-path = (base_path / "../../input/day01_input.txt").resolve()
+path = (base_path / "../input/day01_input.txt").resolve()
 
 with open(path) as f:
     lines = f.readlines()

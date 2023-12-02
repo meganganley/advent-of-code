@@ -58,7 +58,7 @@ class Subset:
         return "red: {}, blue: {}, green: {}".format(self.red, self.blue, self.green)
     
 base_path = Path(__file__).parent
-path = (base_path / "../../input/day02_input.txt").resolve()
+path = (base_path / "../input/day02_input.txt").resolve()
 
 with open(path) as f:
     lines = f.readlines()
