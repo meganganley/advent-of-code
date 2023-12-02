@@ -11,14 +11,18 @@ namespace solutions
             int calories = 0;
             int maxCalories = 0;
 
+            List<int> allCalories = new List<int>();
+
             foreach (string line in lines)
             {
+                // move on to the next elf
                 if (string.IsNullOrEmpty(line.Trim()))
                 {
                     if (maxCalories < calories)
                     {
                         maxCalories = calories;
                     }
+                    allCalories.Add(calories);
                     calories = 0;
                 }
                 else
@@ -26,10 +30,12 @@ namespace solutions
                     calories += int.Parse(line);
                 }
             }
+            allCalories.Sort();
+            allCalories.Reverse();
 
-            Console.WriteLine(maxCalories);
+            Console.WriteLine(maxCalories); // Part 1 - 69281
+            Console.WriteLine(allCalories.Take(3).Sum()); // Part 2 - 201524
 
-            // Part 1 - 69281
         }
     }
 }
