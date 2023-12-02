@@ -69,9 +69,6 @@ for line in lines:
     
     if game.is_possible:
         total_possible += game.id
-    
-    print("Min red: {}, min blue: {}, min green: {}".format(game.min_red, game.min_blue, game.min_green))
-    print("Power: {}".format(game.get_power()))
 
     total_power += game.get_power()
 
