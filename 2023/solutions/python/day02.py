@@ -57,14 +57,12 @@ class Subset:
     def __str__(self):
         return "red: {}, blue: {}, green: {}".format(self.red, self.blue, self.green)
     
-### Read input
 base_path = Path(__file__).parent
 path = (base_path / "../../input/day02_input.txt").resolve()
 
 with open(path) as f:
     lines = f.readlines()
 
-### Set up problem
 max_red = 12
 max_blue = 14
 max_green = 13 
@@ -72,7 +70,6 @@ max_green = 13
 total_possible = 0
 total_power = 0
 
-## Find solution
 for line in lines:
     game = Game(line)
     

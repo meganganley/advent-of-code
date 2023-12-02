@@ -1,14 +1,12 @@
 import re
 from pathlib import Path
 
-### Read input
 base_path = Path(__file__).parent
 path = (base_path / "../../input/day01_input.txt").resolve()
 
 with open(path) as f:
     lines = f.readlines()
 
-### Set up problem
 numbers = {'one':'1', 'two':'2', 'three':'3', 'four':'4', 'five':'5', 'six':'6', 'seven':'7', 'eight':'8', 'nine':'9'}
 
 pattern = '([0-9])'
@@ -21,7 +19,6 @@ for key in numbers:
     pattern += '|('+key+')'
     reverse_pattern += '|('+key[::-1]+')'
  
-### Find solution
 for line in lines:
     calibration_value = ''
 
