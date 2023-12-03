@@ -35,7 +35,6 @@ namespace solutions
                     // number is complete
                     if (!char.IsLetterOrDigit(c) && inNumber)
                     {
-                        //partNumbers.Add(new PartNumber(int.Parse(number), new Point(i, startIndex), new Point(i, j), isAdjacentSymbol));
                         if (isAdjacentSymbol)
                         {
                             total += int.Parse(number);
