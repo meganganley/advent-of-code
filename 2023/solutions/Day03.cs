@@ -106,6 +106,22 @@ namespace solutions
                         // remove dupes
                         adjacentAsterisks = adjacentAsterisks.Distinct().ToList();
 
+                        foreach (var asterisk in adjacentAsterisks)
+                        {
+                            if (!possibleGears.ContainsKey(asterisk))
+                            {
+                                possibleGears.Add(asterisk, new Point(1, int.Parse(number)));
+                            }
+                            else
+                            {
+                                var value = possibleGears[asterisk];
+                                value.X++;
+                                value.Y *= int.Parse(number);
+                                possibleGears[asterisk] = value;
+                            }
+
+                        }
+
                     }
                 }
 
@@ -120,11 +136,6 @@ namespace solutions
                     total += partNumber.number;
 
                 }
-                if (!partNumber.isAdjacent)
-                {
-                    //Console.WriteLine(partNumber);
-
-                }
             }
             Console.WriteLine(total); // Part 1 -  525181
 
@@ -132,17 +143,12 @@ namespace solutions
 
             foreach (KeyValuePair<Point, Point> entry in possibleGears)
             {
-                Console.WriteLine(entry.Key + " " + entry.Value.X + " "  + entry.Value.Y);
                 if (entry.Value.X == 2) 
                 {
                     total += entry.Value.Y;
                 }
-
             }
-
-
-            Console.WriteLine(total); // Part 2 -  83,745,353
-
+            Console.WriteLine(total); // Part 2 -  84289137
         }
 
         static bool isSymbol(char c)
