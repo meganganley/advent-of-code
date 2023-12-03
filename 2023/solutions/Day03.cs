@@ -15,7 +15,6 @@ namespace solutions
             //List<string> lines = Helper.get_input("day03_input_sample.txt");
             List<string> lines = Helper.get_input("day03_input.txt");
 
-            int numRows = lines.Count;
             int numCols = lines[0].Length;
 
             char[,] characters = new char[lines.Count, lines[0].Length];
@@ -130,7 +129,7 @@ namespace solutions
             int total = 0;
             foreach (var partNumber in partNumbers)
             {
-                Console.WriteLine(partNumber);
+               // Console.WriteLine(partNumber);
                 if (partNumber.isAdjacent)
                 {
                     total += partNumber.number;
@@ -166,53 +165,45 @@ namespace solutions
 
             if (i > 0 && j > 0 && isSymbol(lines[i - 1][j - 1]))
             {
-                isAdjacent = true;
-               
+                return true;               
             }
 
             if (i > 0 && isSymbol(lines[i - 1][j]))
             {
-                isAdjacent = true;
-                
+                return true;
             }
 
             if (i > 0 && j < numCols - 1 && isSymbol(lines[i - 1][j + 1]))
             {
-                isAdjacent = true;
-                
+                return true;
             }
 
             if (j > 0 && isSymbol(lines[i][j - 1]))
             {
-                isAdjacent = true;
-                
+                return true;
             }
 
             if (j < numCols - 1 && isSymbol(lines[i][j + 1]))
             {
-                isAdjacent = true;
-                
+                return true;
             }
 
             if (i < numRows - 1 && j > 0 && isSymbol(lines[i + 1][j - 1]))
             {
-                isAdjacent = true;
-                
+                return true;
             }
 
             if (i < numRows - 1 && isSymbol(lines[i + 1][j]))
             {
-                isAdjacent = true;
-                
+                return true;
             }
 
             if (i < numRows - 1 && j < numCols - 1 && isSymbol(lines[i + 1][j + 1]))
             {
-                isAdjacent = true;
-                
+                return true;
             }
 
-            return isAdjacent;
+            return false;
         }
 
 
@@ -261,7 +252,6 @@ namespace solutions
             if (i < numRows - 1 && j < numCols - 1 && lines[i + 1][j + 1] == '*')
             {
                 adjacentAsterisks.Add(new Point(i + 1, j + 1));
-
             }
 
             return adjacentAsterisks;
