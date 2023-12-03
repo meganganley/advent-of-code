@@ -17,21 +17,18 @@ namespace solutions
 
             int numCols = lines[0].Length;
 
-            char[,] characters = new char[lines.Count, lines[0].Length];
-
-            List<PartNumber> partNumbers = new List<PartNumber>();
-
             Dictionary<Point, Point> possibleGears = new Dictionary<Point, Point>(); // co-ordinate of asterisk, then Point(countAdjacent, productOfAdjacent)
+            int total = 0;
 
             for (int i = 0; i < lines.Count; i++)
             {
                 string line = lines[i];
 
-                int startIndex = 0;
                 bool inNumber = false;
                 string number = "";
                 bool isAdjacentSymbol = false;
                 List<Point> adjacentAsterisks = new List<Point>();
+
 
                 for (int j = 0; j < line.Length; j++)
                 {
@@ -39,7 +36,11 @@ namespace solutions
                     // number is complete
                     if (!char.IsLetterOrDigit(c) && inNumber)
                     {
-                        partNumbers.Add(new PartNumber(int.Parse(number), new Point(i, startIndex), new Point(i, j), isAdjacentSymbol));
+                        //partNumbers.Add(new PartNumber(int.Parse(number), new Point(i, startIndex), new Point(i, j), isAdjacentSymbol));
+                        if (isAdjacentSymbol)
+                        {
+                            total += int.Parse(number);
+                        }                        
 
                         foreach (var asterisk in adjacentAsterisks)
                         {
@@ -65,7 +66,6 @@ namespace solutions
                     // detected start of new number
                     else if (Char.IsNumber(c) && !inNumber)
                     {
-                        startIndex = j;
                         inNumber = true;
                         number += c;
 
@@ -99,7 +99,12 @@ namespace solutions
                     // the last number in the column doesn't have a . to signify the end
                     if (j == numCols - 1 && inNumber)
                     {
-                        partNumbers.Add(new PartNumber(int.Parse(number), new Point(i, startIndex), new Point(i, j), isAdjacentSymbol));
+                        if (isAdjacentSymbol)
+                        {
+                            total += int.Parse(number);
+                        }
+
+                        //partNumbers.Add(new PartNumber(int.Parse(number), new Point(i, startIndex), new Point(i, j), isAdjacentSymbol));
                         // add new items 
                         adjacentAsterisks.AddRange(getAllAdjacentToAsterisk(i, j, lines));
                         // remove dupes
@@ -126,8 +131,7 @@ namespace solutions
 
             }
 
-            int total = 0;
-            foreach (var partNumber in partNumbers)
+            /*foreach (var partNumber in partNumbers)
             {
                // Console.WriteLine(partNumber);
                 if (partNumber.isAdjacent)
@@ -135,7 +139,7 @@ namespace solutions
                     total += partNumber.number;
 
                 }
-            }
+            }*/
             Console.WriteLine(total); // Part 1 -  525181
 
             total = 0;
@@ -159,8 +163,6 @@ namespace solutions
         {
             int numRows = lines.Count;
             int numCols = lines[0].Length;
-
-            bool isAdjacent = false;
 
 
             if (i > 0 && j > 0 && isSymbol(lines[i - 1][j - 1]))
@@ -259,26 +261,4 @@ namespace solutions
         }
     }
 }
-
-internal class PartNumber
-    {
-        public int number;
-        public Point start;
-        public Point end;
-        public bool isAdjacent;
-
-        public PartNumber(int a_number, Point a_start, Point a_end, bool adjacent)
-        {
-            number = a_number;
-            start = a_start;
-            end = a_end;
-            isAdjacent = adjacent;
-        }
-
-
-    public override string ToString()
-        {
-            return "Part number: " + number + ". Start =  " + start.X + " " + start.Y + ". End =  " + end.X + " " + end.Y + ". Adjacent = " + isAdjacent;
-        }
-    }
 
