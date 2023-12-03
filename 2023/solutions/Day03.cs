@@ -21,6 +21,8 @@ namespace solutions
 
             List<PartNumber> partNumbers = new List<PartNumber>();
 
+            Dictionary<Point, int> possibleGears = new Dictionary<Point, int>();
+
             for (int i = 0; i < lines.Count; i++)
             {
                 string line = lines[i];
@@ -67,6 +69,14 @@ namespace solutions
                             isAdjacent = true;
                         }
                     }
+                    // the last number in the column doesn't have a . to signify the end
+                    if (j == numCols-1 && inNumber)
+                    {
+                        partNumbers.Add(new PartNumber(int.Parse(number), new Point(i, startIndex), new Point(i, j), isAdjacent));
+                        inNumber = false;
+                        number = "";
+                        isAdjacent = false;
+                    }
                 }
                 
             }
@@ -79,7 +89,12 @@ namespace solutions
                 {
                     total += partNumber.number;
 
-                }                
+                }
+                if (!partNumber.isAdjacent)
+                {
+                    //Console.WriteLine(partNumber);
+
+                }
             }
 
             Console.WriteLine(total); // Part 1 -  522144
@@ -91,13 +106,24 @@ namespace solutions
         {
             return !char.IsLetterOrDigit(c) && c != '.';
         }
-        static bool getAdjacent(int i, int j, List<string> lines)
+        static bool isGear(char c)
+        {
+            return c == '*';
+        }
+        static bool getAdjacent(int i, int j, List<string> lines, Dictionary<Point, int> possibleGears)
         {
             int numRows = lines.Count;
             int numCols = lines[0].Length;
 
+            //bool isAdjacent = true;
+
             if (i > 0 && j > 0 && isSymbol(lines[i - 1][j - 1]))
             {
+                if (lines[i - 1][j - 1] == '*')
+                {
+                    //possibleGears.TryGetValue(new Point(i-1, j-1), out var currentCount);
+                    //possibleGears[new Point(i - 1, j - 1)] = currentCount + 1;
+                }
                 return true;
             }
 
