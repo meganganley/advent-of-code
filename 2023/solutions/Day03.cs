@@ -9,9 +9,10 @@ namespace solutions
 {
     internal class Day03
     {
+        
         static void Main(string[] args)
         {
-            //List<string> lines = Helper.get_input("day03_input.txt");
+            //List<string> lines = Helper.get_input("day03_input_sample.txt");
             List<string> lines = Helper.get_input("day03_input.txt");
 
             int numRows = lines.Count;
@@ -21,7 +22,7 @@ namespace solutions
 
             List<PartNumber> partNumbers = new List<PartNumber>();
 
-            Dictionary<Point, int> possibleGears = new Dictionary<Point, int>();
+            Dictionary<Point, Point> possibleGears = new Dictionary<Point, Point>(); // co-ordinate of asterisk, then Point(countAdjacent, productOfAdjacent)
 
             for (int i = 0; i < lines.Count; i++)
             {
@@ -30,7 +31,8 @@ namespace solutions
                 int startIndex = 0;
                 bool inNumber = false;
                 string number = "";
-                bool isAdjacent = false;
+                bool isAdjacentSymbol = false;
+                List<Point> adjacentAsterisks = new List<Point>();
 
                 for (int j = 0; j < line.Length; j++)
                 {
@@ -38,12 +40,29 @@ namespace solutions
                     // number is complete
                     if (!char.IsLetterOrDigit(c) && inNumber)
                     {
-                        partNumbers.Add(new PartNumber(int.Parse(number), new Point(i, startIndex), new Point(i, j), isAdjacent));
-                        inNumber = false;
-                        number = "";                        
-                        isAdjacent = false;
+                        partNumbers.Add(new PartNumber(int.Parse(number), new Point(i, startIndex), new Point(i, j), isAdjacentSymbol));
 
-                    } 
+                        foreach (var asterisk in adjacentAsterisks)
+                        {
+                            if (!possibleGears.ContainsKey(asterisk))
+                            {
+                                possibleGears.Add(asterisk, new Point(1, int.Parse(number)));
+                            } else
+                            {
+                                var value = possibleGears[asterisk];
+                                value.X++;
+                                value.Y *= int.Parse(number);
+                                possibleGears[asterisk] = value;
+                            }
+
+                        }
+
+                        inNumber = false;
+                        number = "";
+                        isAdjacentSymbol = false;
+                        adjacentAsterisks = new List<Point>();
+
+                    }
                     // detected start of new number
                     else if (Char.IsNumber(c) && !inNumber)
                     {
@@ -52,33 +71,44 @@ namespace solutions
                         number += c;
 
                         // see if it is adjacent (don't overwrite if not)
-                        if(getAdjacent(i, j, lines))
+                        if (isAdjacentToSymbol(i, j, lines))
                         {
-                            isAdjacent = true;
+                            isAdjacentSymbol = true;
                         }
-
-                    } 
+                        // add new items 
+                        adjacentAsterisks.AddRange(getAllAdjacentToAsterisk(i, j, lines));
+                        // remove dupes
+                        adjacentAsterisks = adjacentAsterisks.Distinct().ToList(); 
+  
+                    }
                     // current number is continuing
                     else if (Char.IsNumber(c) && inNumber)
                     {
                         number += c;
 
                         // see if it is adjacent (don't overwrite if not)
-                        if (getAdjacent(i, j, lines))
+                        if (isAdjacentToSymbol(i, j, lines))
                         {
-                            isAdjacent = true;
+                            isAdjacentSymbol = true;
                         }
+                        // add new items 
+                        adjacentAsterisks.AddRange(getAllAdjacentToAsterisk(i, j, lines));
+                        // remove dupes
+                        adjacentAsterisks = adjacentAsterisks.Distinct().ToList();
+
                     }
                     // the last number in the column doesn't have a . to signify the end
-                    if (j == numCols-1 && inNumber)
+                    if (j == numCols - 1 && inNumber)
                     {
-                        partNumbers.Add(new PartNumber(int.Parse(number), new Point(i, startIndex), new Point(i, j), isAdjacent));
-                        inNumber = false;
-                        number = "";
-                        isAdjacent = false;
+                        partNumbers.Add(new PartNumber(int.Parse(number), new Point(i, startIndex), new Point(i, j), isAdjacentSymbol));
+                        // add new items 
+                        adjacentAsterisks.AddRange(getAllAdjacentToAsterisk(i, j, lines));
+                        // remove dupes
+                        adjacentAsterisks = adjacentAsterisks.Distinct().ToList();
+
                     }
                 }
-                
+
             }
 
             int total = 0;
@@ -96,9 +126,22 @@ namespace solutions
 
                 }
             }
+            Console.WriteLine(total); // Part 1 -  525181
 
-            Console.WriteLine(total); // Part 1 -  522144
-            Console.WriteLine(""); // Part 2 - 
+            total = 0;
+
+            foreach (KeyValuePair<Point, Point> entry in possibleGears)
+            {
+                Console.WriteLine(entry.Key + " " + entry.Value.X + " "  + entry.Value.Y);
+                if (entry.Value.X == 2) 
+                {
+                    total += entry.Value.Y;
+                }
+
+            }
+
+
+            Console.WriteLine(total); // Part 2 -  83,745,353
 
         }
 
@@ -106,68 +149,122 @@ namespace solutions
         {
             return !char.IsLetterOrDigit(c) && c != '.';
         }
-        static bool isGear(char c)
-        {
-            return c == '*';
-        }
-        static bool getAdjacent(int i, int j, List<string> lines, Dictionary<Point, int> possibleGears)
+
+        static bool isAdjacentToSymbol(int i, int j, List<string> lines)
         {
             int numRows = lines.Count;
             int numCols = lines[0].Length;
 
-            //bool isAdjacent = true;
+            bool isAdjacent = false;
+
 
             if (i > 0 && j > 0 && isSymbol(lines[i - 1][j - 1]))
             {
-                if (lines[i - 1][j - 1] == '*')
-                {
-                    //possibleGears.TryGetValue(new Point(i-1, j-1), out var currentCount);
-                    //possibleGears[new Point(i - 1, j - 1)] = currentCount + 1;
-                }
-                return true;
+                isAdjacent = true;
+               
             }
 
             if (i > 0 && isSymbol(lines[i - 1][j]))
             {
-                return true;
+                isAdjacent = true;
+                
             }
 
             if (i > 0 && j < numCols - 1 && isSymbol(lines[i - 1][j + 1]))
             {
-                return true;
+                isAdjacent = true;
+                
             }
 
             if (j > 0 && isSymbol(lines[i][j - 1]))
             {
-                return true;
+                isAdjacent = true;
+                
             }
 
             if (j < numCols - 1 && isSymbol(lines[i][j + 1]))
             {
-                return true;
+                isAdjacent = true;
+                
             }
 
             if (i < numRows - 1 && j > 0 && isSymbol(lines[i + 1][j - 1]))
             {
-                return true;
+                isAdjacent = true;
+                
             }
 
             if (i < numRows - 1 && isSymbol(lines[i + 1][j]))
             {
-                return true;
+                isAdjacent = true;
+                
             }
 
             if (i < numRows - 1 && j < numCols - 1 && isSymbol(lines[i + 1][j + 1]))
             {
-                return true;
+                isAdjacent = true;
+                
             }
 
-            return false;
+            return isAdjacent;
         }
 
-    }
 
-    internal class PartNumber
+        static List<Point> getAllAdjacentToAsterisk(int i, int j, List<string> lines)
+        {
+            int numRows = lines.Count;
+            int numCols = lines[0].Length;
+
+            List<Point> adjacentAsterisks = new List<Point>();
+
+            if (i > 0 && j > 0 && lines[i - 1][j - 1] == '*')
+            {
+                adjacentAsterisks.Add(new Point(i - 1, j - 1));
+            }
+
+            if (i > 0 && lines[i - 1][j] == '*')
+            {
+                adjacentAsterisks.Add(new Point(i - 1, j));
+            }
+
+            if (i > 0 && j < numCols - 1 && lines[i - 1][j + 1] == '*')
+            {
+                adjacentAsterisks.Add(new Point(i - 1, j + 1));
+            }
+
+            if (j > 0 && lines[i][j - 1] == '*')
+            {
+                adjacentAsterisks.Add(new Point(i, j - 1));
+            }
+
+            if (j < numCols - 1 && lines[i][j + 1] == '*')
+            {
+                adjacentAsterisks.Add(new Point(i, j + 1));
+            }
+
+            if (i < numRows - 1 && j > 0 && lines[i + 1][j - 1] == '*')
+            {
+                adjacentAsterisks.Add(new Point(i + 1, j - 1));
+            }
+
+            if (i < numRows - 1 && lines[i + 1][j] == '*')
+            {
+                adjacentAsterisks.Add(new Point(i + 1, j));
+            }
+
+            if (i < numRows - 1 && j < numCols - 1 && lines[i + 1][j + 1] == '*')
+            {
+                adjacentAsterisks.Add(new Point(i + 1, j + 1));
+
+            }
+
+            return adjacentAsterisks;
+
+        }
+    }
+}
+
+internal class PartNumber
     {
         public int number;
         public Point start;
@@ -188,4 +285,4 @@ namespace solutions
             return "Part number: " + number + ". Start =  " + start.X + " " + start.Y + ". End =  " + end.X + " " + end.Y + ". Adjacent = " + isAdjacent;
         }
     }
-}
+
