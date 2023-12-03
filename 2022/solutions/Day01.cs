@@ -2,7 +2,7 @@
 
 namespace solutions
 {
-    internal class Day01
+    internal class day01
     {
         static void Main(string[] args)
         {
