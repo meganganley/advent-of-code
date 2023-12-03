@@ -7,9 +7,8 @@ using System.Xml.Linq;
 
 namespace solutions
 {
-    internal class Day03
-    {
-        
+    internal class day03
+    {        
         static void Main(string[] args)
         {
             //List<string> lines = Helper.get_input("day03_input_sample.txt");
@@ -40,8 +39,9 @@ namespace solutions
                         if (isAdjacentSymbol)
                         {
                             total += int.Parse(number);
-                        }                        
+                        }
 
+                        // maintain asterisk dictionary with our findings from this number
                         foreach (var asterisk in adjacentAsterisks)
                         {
                             if (!possibleGears.ContainsKey(asterisk))
@@ -54,9 +54,9 @@ namespace solutions
                                 value.Y *= int.Parse(number);
                                 possibleGears[asterisk] = value;
                             }
-
                         }
 
+                        // tidy up for remaining numbers in row
                         inNumber = false;
                         number = "";
                         isAdjacentSymbol = false;
@@ -104,12 +104,12 @@ namespace solutions
                             total += int.Parse(number);
                         }
 
-                        //partNumbers.Add(new PartNumber(int.Parse(number), new Point(i, startIndex), new Point(i, j), isAdjacentSymbol));
                         // add new items 
                         adjacentAsterisks.AddRange(getAllAdjacentToAsterisk(i, j, lines));
                         // remove dupes
                         adjacentAsterisks = adjacentAsterisks.Distinct().ToList();
 
+                        // maintain asterisk dictionary with our findings from this number
                         foreach (var asterisk in adjacentAsterisks)
                         {
                             if (!possibleGears.ContainsKey(asterisk))
@@ -123,23 +123,11 @@ namespace solutions
                                 value.Y *= int.Parse(number);
                                 possibleGears[asterisk] = value;
                             }
-
                         }
-
                     }
                 }
-
             }
 
-            /*foreach (var partNumber in partNumbers)
-            {
-               // Console.WriteLine(partNumber);
-                if (partNumber.isAdjacent)
-                {
-                    total += partNumber.number;
-
-                }
-            }*/
             Console.WriteLine(total); // Part 1 -  525181
 
             total = 0;
