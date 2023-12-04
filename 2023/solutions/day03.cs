@@ -1,15 +1,10 @@
-﻿/*using System.Collections.Generic;
-using System.Drawing;
-using System.Linq.Expressions;
-using System.Reflection;
-using System.Text.RegularExpressions;
-using System.Xml.Linq;
+﻿using System.Drawing;
 
 namespace solutions
 {
-    internal class day03
-    {        
-        static void Main(string[] args)
+    public class day03
+    {
+        public static void Run()
         {
             //List<string> lines = Helper.get_input("day03_input_sample.txt");
             List<string> lines = Helper.get_input("day03_input.txt");
@@ -249,4 +244,3 @@ namespace solutions
     }
 }
 
-*/

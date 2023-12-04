@@ -1,39 +1,41 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
-using System.Linq.Expressions;
-using System.Reflection;
-using System.Text.RegularExpressions;
-using System.Xml.Linq;
-
-namespace solutions
+﻿namespace solutions
 {
-    internal class day04
+    public class day04
     {
-        static void Main(string[] args)
+        public static void Run()
         {
-           // List<string> lines = Helper.get_input("day04_input_sample.txt");
+            //List<string> lines = Helper.get_input("day04_input_sample.txt");
             List<string> lines = Helper.get_input("day04_input.txt");
 
             int total = 0;
 
-            int winningLines = 0;
+            int[] numberCards = Enumerable.Repeat(1, lines.Count).ToArray(); ; // every element once to start
 
-            foreach (string line in lines)
+            for (int i = 0; i < lines.Count; i++)
             {
+                string line = lines[i];
+
                 var input = line.Split(':')[1].Split('|');
                 List<int> winningNumbers = getNumbers(input[0]);
                 List<int> myNumbers = getNumbers(input[1]);
 
-                var CommonList = winningNumbers.Intersect(myNumbers).ToList();
+                var commonList = winningNumbers.Intersect(myNumbers).ToList();
 
-                if (CommonList.Count > 0)
+                // some winning numbers
+                if (commonList.Count > 0)
                 {
-                    total += (int)Math.Pow(2, CommonList.Count-1);
+                    total += (int)Math.Pow(2, commonList.Count-1);
+                }
+                for (int j = 0; j < commonList.Count; j++)
+                {
+                    numberCards[i+j+1] += numberCards[i];
                 }
                
             }
 
-            Console.WriteLine(total);   
+            Console.WriteLine(total);    // 17782
+            Console.WriteLine(numberCards.Sum());    // 8477787
+
 
         }
 
