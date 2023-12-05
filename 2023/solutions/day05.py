@@ -6,15 +6,19 @@ path = (base_path / "../input/day05_input.txt").resolve()
 with open(path) as f:
     lines = f.readlines()
 
-seeds = []
+seeds_part1 = []
+seeds_part2 = []
 current_map = ''
 
 maps = {}
 
+seeds_str = lines[0].split(':')[1].split()
+seeds_part1 = [eval(x) for x in seeds_str]
+
+
 for line in lines:
     if 'seeds' in line:
-        seeds_str = line.split(':')[1].split()
-        seeds = [eval(x) for x in seeds_str]
+        #print(seeds_part2)
         continue
 
     if ':' in line:
@@ -25,62 +29,48 @@ for line in lines:
         continue
 
     if current_map in maps.keys():
-        maps[current_map] += [line.strip()]
-    else:
-        maps[current_map] = [line.strip()]
-
-print(maps)
-
-'''
-
-lists_and_offsets = []
-for key, value in maps.items():
-    temp_list = []
-    for r in value:
-        values = r.split() 
+        values = line.strip().split()
         values = [eval(x) for x in values]
-        count = 0
-        offset = values[0] - values[1] # 98
-        temp_list = []
-        temp_list.extend(range(values[1], values[1]+values[2]))
+        maps[current_map] += [values]
+    else:
+        values = line.strip().split()
+        values = [eval(x) for x in values]
+        maps[current_map] = [values]
 
-        #temp_list = []
-        #for i in range(values[1], values[1]+values[2]):
-        #    temp_dict[i] = values[0]+count
-        #    count += 1
-        #lists_and_offsets.append((temp_list, offset))
-    break
-'''
+#print(maps)
 
-locations = []
+min_location = 99999999
+
+for i in range(0, len(seeds_part1), 2):
+    #print(str(range(seeds_part1[i], seeds_part1[i+1])))
+    for j in range(seeds_part1[i], seeds_part1[i+1] + seeds_part1[i]):
+        lookup = j
+
 
 # each seed from first line of input
-for seed in seeds:
-    lookup = seed
-    # each set of maps, e.g. 'seed-to-soil'
-    for key in maps:  
-        lookup_found = False      
-        # there are multiple options for each map, check until you find at least one that fits
-        for map in maps[key]:
-            #print(map)
-            if lookup_found:
-                break
+#for seed in seeds_part1:
+#for seed in seeds_part1:
+        #lookup = seed
+        # each set of maps, e.g. 'seed-to-soil'
+        for key in maps:  
+            lookup_found = False      
+            # there are multiple options for each map, check until you find at least one that fits
+            for map in maps[key]:
+                if lookup_found:
+                    break
 
-            values = map.split() 
-            values = [eval(x) for x in values]
-            #print('lookup checking: ' + str(lookup) + ' : ' + str(values[1]) + ' -> ' + str(values[1] + values[2]) + ' for ' + key)
-
-            if lookup >= values[1] and lookup < values[1] + values[2]: 
-                print('lookup found: ' + str(lookup) + ' -> ' + str(lookup - (values[1] - values[0])) + ' for ' + key)
-                lookup = lookup - (values[1] - values[0])
-                lookup_found = True
-                break
-    
-    print('location found ' + str(lookup) )
-    locations.append(lookup)
+                if lookup >= map[1] and lookup < map[1] + map[2]: 
+                    #print('lookup found: ' + str(lookup) + ' -> ' + str(lookup - (values[1] - values[0])) + ' for ' + key)
+                    lookup = lookup - (map[1] - map[0])
+                    lookup_found = True
+                    break
+        
+        #print('location found ' + str(lookup) )
+        if lookup < min_location:
+            min_location = lookup
     
 
-print(min(locations)) # 165788812
+print(min_location) # 165788812
     
 
 
