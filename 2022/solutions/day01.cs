@@ -1,10 +1,8 @@
-﻿using System.Reflection;
-
-namespace solutions
+﻿namespace solutions
 {
-    internal class day01
+    public class day01
     {
-        static void Main(string[] args)
+        public static void Run()
         {
             List<string> lines = Helper.get_input("day01_input.txt");
 
