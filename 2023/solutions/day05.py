@@ -1,4 +1,5 @@
 from pathlib import Path
+import datetime
     
 base_path = Path(__file__).parent
 path = (base_path / "../input/day05_input.txt").resolve()
@@ -39,9 +40,10 @@ for line in lines:
 
 #print(maps)
 
-min_location = 99999999
+min_location = 9999999999999
 
 for i in range(0, len(seeds_part1), 2):
+    print('Starting from ' + str(seeds_part1[i]) + ' at ' + str(datetime.datetime.now()) )
     #print(str(range(seeds_part1[i], seeds_part1[i+1])))
     for j in range(seeds_part1[i], seeds_part1[i+1] + seeds_part1[i]):
         lookup = j
@@ -53,7 +55,7 @@ for i in range(0, len(seeds_part1), 2):
         #lookup = seed
         # each set of maps, e.g. 'seed-to-soil'
         for key in maps:  
-            lookup_found = False      
+            lookup_found = False   
             # there are multiple options for each map, check until you find at least one that fits
             for map in maps[key]:
                 if lookup_found:
