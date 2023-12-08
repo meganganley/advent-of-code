@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.Reflection.Metadata;
+using System.Xml.Linq;
 using static System.Net.Mime.MediaTypeNames;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -9,8 +10,8 @@ namespace solutions
     {
         public static void Run()
         {
-            //List<string> lines = Helper.get_input("day07_input_sample.txt");
-            List<string> lines = Helper.get_input("day07_sample_input.txt");
+            List<string> lines = Helper.get_input("day07_input.txt");
+            //List<string> lines = Helper.get_input("day07_sample_input.txt");
             
             List<Hand> hands = new List<Hand>();
 
@@ -31,20 +32,18 @@ namespace solutions
                 hands.Add(h);
             }
 
-            List<Hand> sortedHands = new List<Hand>();
+            hands.Sort();
+
+            int totalWinnings = 0;
+            int rank = 1;
 
             for ( int i = 0; i < hands.Count; i++)
             {
-                for (int j = i; j < hands.Count; j++)
-                {
-                    if ()
-                    {
-
-                    }
-                }
+                totalWinnings += rank * hands[i].bid;
+                rank++;
             }
 
-            Console.WriteLine(0);    // Part 1 - 1108800
+            Console.WriteLine(totalWinnings);    // Part 1 - 251029473
             Console.WriteLine(0);    // Part 2 - 36919753
 
         }
@@ -80,10 +79,7 @@ namespace solutions
                 }
             }
             return handArray;
-
         }
-
-
 
         public static int[] GetHigherHand(Dictionary<int[], int> handScores, int[] hand1, int[] hand2)
         {
@@ -111,10 +107,10 @@ namespace solutions
         }
     }
         
-    public class Hand
+    public class Hand : IComparable<Hand>
     {
         int[] hand;
-        int bid;
+        public int bid;
 
         public Hand(int[] hand, int bid)
         {
@@ -190,7 +186,7 @@ namespace solutions
 
             return 1; // High card
         }
-        public int CompareTo(object obj)
+        public int CompareTo(Hand? obj)
         {
             if (this.GetType() != obj.GetType())
             {
@@ -222,27 +218,17 @@ namespace solutions
                     }
                 }
                 return 1;
-
-               /* long area1 = this.Height * this.Width;
-                long area2 = square2.Height * square2.Width;
-
-                if (area1 == area2)
-                {
-                    return (0);
-                }
-                else if (area1 > area2)
-                {
-                    return (1);
-                }
-                else if (area1 < area2)
-                {
-                    return (-1);
-                }
-                else
-                {
-                    return (-1);
-                }*/
             }
+        }
+        public override string ToString()
+        {
+            string printString = "";
+            for (int i = 0; i < hand.Length; i ++)
+            {
+                printString += hand[i];
+            }
+
+            return "Hand: " + printString + " , bid = " + bid + " , score = " + GetScore() ;
         }
 
     }
