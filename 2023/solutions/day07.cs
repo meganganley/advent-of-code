@@ -21,30 +21,24 @@ namespace solutions
                 int bid = int.Parse(line.Split(" ")[1]);
                 Hand h = new Hand(hand, bid);
 
-                Console.WriteLine("Hand: ");
-
-                foreach (int i in hand)
-                {
-                    Console.Write(i + " ");
-                }
-                Console.WriteLine("\nScore: " + h.GetScore());
-
                 hands.Add(h);
             }
 
             hands.Sort();
+            //hands.Reverse();
 
             int totalWinnings = 0;
             int rank = 1;
 
             for ( int i = 0; i < hands.Count; i++)
             {
+                Console.WriteLine("rank " + rank + " " + hands[i]);
                 totalWinnings += rank * hands[i].bid;
                 rank++;
             }
 
             Console.WriteLine(totalWinnings);    // Part 1 - 251029473
-            Console.WriteLine(0);    // Part 2 - 36919753
+            Console.WriteLine(0);    // Part 2 - 251003917
 
         }
 
@@ -63,7 +57,7 @@ namespace solutions
                 }
                 else if (hand[i] == 'J')
                 {
-                    handArray[i] = 11;
+                    handArray[i] = 1;
                 }
                 else if (hand[i] == 'Q')
                 {
@@ -137,39 +131,67 @@ namespace solutions
             bool checkFullHouse = false;
             bool checkTwoPair = false;
 
+            int numberJokers;
+            if (countChars.ContainsKey(1))
+            {
+                numberJokers = countChars[1];
+            }
+            else
+            {
+                numberJokers = 0;
+            }
+
+            if (numberJokers == 5)
+            {
+                return 7;
+            }
+
             foreach (KeyValuePair<int, int> pair in sortedDict)
             {
-                if (pair.Value == 5)
+                
+                if (pair.Key == 1)
                 {
+                    continue; // joker
+                }
+
+                if (pair.Value + numberJokers == 5)
+                {
+                    numberJokers = 0;
                     return 7; // Five of a kind
                 }
-                else if (pair.Value == 4)
+                else if (pair.Value + numberJokers == 4)
                 {
+                    numberJokers = 0;
                     return 6; // Four of a kind
 
                 }
-                else if (pair.Value == 3)
+                else if (pair.Value + numberJokers == 3)
                 {
+                    numberJokers = 0;
                     checkFullHouse = true;
 
                 }
-                else if (pair.Value == 2 && checkFullHouse)
+                else if (pair.Value + numberJokers == 2  && checkFullHouse)
                 {
+                    numberJokers = 0;
                     return 5;  // Full house
 
                 }
-                else if (pair.Value == 2 && !checkFullHouse && !checkTwoPair)
+                else if (pair.Value + numberJokers == 2 && !checkFullHouse && !checkTwoPair)
                 {
+                    numberJokers = 0; 
                     checkTwoPair = true;
 
                 }
-                else if (pair.Value == 2 && checkTwoPair)
+                else if (pair.Value + numberJokers == 2 && checkTwoPair)
                 {
+                    numberJokers = 0;
                     return 3;  // Two Pair
 
                 }
-                else if (pair.Value == 2 && !checkFullHouse && !checkTwoPair)
+                else if (pair.Value + numberJokers == 2 && !checkFullHouse && !checkTwoPair)
                 {
+                    numberJokers = 0;
                     return 2;  // Pair
 
                 }
@@ -225,7 +247,7 @@ namespace solutions
             string printString = "";
             for (int i = 0; i < hand.Length; i ++)
             {
-                printString += hand[i];
+                printString += hand[i] + " ";
             }
 
             return "Hand: " + printString + " , bid = " + bid + " , score = " + GetScore() ;
