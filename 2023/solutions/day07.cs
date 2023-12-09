@@ -24,8 +24,8 @@ namespace solutions
                 hands.Add(h);
             }
 
+            // custom sort order defined in class
             hands.Sort();
-            //hands.Reverse();
 
             int totalWinnings = 0;
             int rank = 1;
@@ -141,11 +141,13 @@ namespace solutions
                 numberJokers = 0;
             }
 
+            // special case - all jokers
             if (numberJokers == 5)
             {
                 return 7;
             }
 
+            // otherwise, add the joker to the best score 
             foreach (KeyValuePair<int, int> pair in sortedDict)
             {
                 
@@ -156,42 +158,42 @@ namespace solutions
 
                 if (pair.Value + numberJokers == 5)
                 {
-                    numberJokers = 0;
+                    numberJokers = 0; // joker is now used up
                     return 7; // Five of a kind
                 }
                 else if (pair.Value + numberJokers == 4)
                 {
-                    numberJokers = 0;
+                    numberJokers = 0; // joker is now used up
                     return 6; // Four of a kind
 
                 }
                 else if (pair.Value + numberJokers == 3)
                 {
-                    numberJokers = 0;
+                    numberJokers = 0; // joker is now used up
                     checkFullHouse = true;
 
                 }
                 else if (pair.Value + numberJokers == 2  && checkFullHouse)
                 {
-                    numberJokers = 0;
+                    numberJokers = 0; // joker is now used up
                     return 5;  // Full house
 
                 }
                 else if (pair.Value + numberJokers == 2 && !checkFullHouse && !checkTwoPair)
                 {
-                    numberJokers = 0; 
+                    numberJokers = 0;  // joker is now used up
                     checkTwoPair = true;
 
                 }
                 else if (pair.Value + numberJokers == 2 && checkTwoPair)
                 {
-                    numberJokers = 0;
+                    numberJokers = 0; // joker is now used up
                     return 3;  // Two Pair
 
                 }
                 else if (pair.Value + numberJokers == 2 && !checkFullHouse && !checkTwoPair)
                 {
-                    numberJokers = 0;
+                    numberJokers = 0; // joker is now used up
                     return 2;  // Pair
 
                 }
@@ -208,39 +210,30 @@ namespace solutions
 
             return 1; // High card
         }
-        public int CompareTo(Hand? obj)
+        public int CompareTo(Hand? hand2)
         {
-            if (this.GetType() != obj.GetType())
+            if (GetScore() > hand2.GetScore())
             {
-                throw (new ArgumentException(
-                       "Both objects being compared must be of type Square."));
+                return 1;
             }
-            else
+            if (GetScore() < hand2.GetScore())
             {
-                Hand hand2 = (Hand)obj;
-
-                if (GetScore() > hand2.GetScore())
+                return -1;
+            }
+            for (int i = 0; i < hand.Length; i++)
+            {
+                if (hand[i] > hand2.hand[i])
                 {
                     return 1;
                 }
-                if (GetScore() < hand2.GetScore())
+
+                if (hand[i] < hand2.hand[i])
                 {
                     return -1;
                 }
-                for (int i = 0; i < this.hand.Length; i++)
-                {
-                    if (hand[i] > hand2.hand[i])
-                    {
-                        return 1;
-                    }
-
-                    if (hand[i] < hand2.hand[i])
-                    {
-                        return -1;
-                    }
-                }
-                return 1;
             }
+            return 1;
+            
         }
         public override string ToString()
         {
