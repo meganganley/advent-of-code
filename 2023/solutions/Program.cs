@@ -4,9 +4,7 @@
     {
         static void Main(string[] args)
         {
-            //day03.Run();
-            day09.Run();
-
+            day10.Run();
         }
     }
 }
