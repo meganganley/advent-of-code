@@ -19,9 +19,7 @@ namespace solutions
             List<string> lines = Helper.get_input("day10_sample_input.txt");
 
             char[] pipes = ['|', '-', 'L', 'J', '7', 'F'];
-            /*Dictionary<char, char> pipes = new Dictionary<char, char> {
-                { '|', 'v' } ,
-            };*/
+   
 
             int numFilledRows = lines.Count;
             int numFilledCols = lines[0].Length;
@@ -44,7 +42,7 @@ namespace solutions
                     grid[i, j] = (char)lines[i - 1][j - 1];
                     if (grid[i,j] == 'S')
                     {
-                        start = new Point(i, i);
+                        start = new Point(j, i);
                         usedPoints.Add(start);
                     }
                 }
@@ -90,6 +88,10 @@ namespace solutions
             Point curr = new Point(0,0);
             while (keepLooping)
             {
+                if (forceStop == 13)
+                {
+                    Console.WriteLine('a');
+                }
                 // do left loop
                 curr = leftLoop[forceStop];
 
@@ -112,13 +114,14 @@ namespace solutions
                 usedPoints.Add(next);
 
                 forceStop++;
+                /*
                 if(forceStop > 10)
                 {
                     keepLooping = false;
-                }
+                }*/
 
             }
-            
+
             /*
             foreach (var item in leftLoop)
             {
@@ -128,7 +131,7 @@ namespace solutions
             foreach (var item in rightLoop)
             {
                 Console.WriteLine(item.X + " " + item.Y);
-            }/*
+            }*/
 
             // print grid
             for (int i = 0; i < numRows; i++)
@@ -138,8 +141,8 @@ namespace solutions
                     Console.Write(grid[i, j]);
                 }
                 Console.WriteLine();
-            }    */       
-           
+            }    
+
             Console.WriteLine(Math.Max(rightLoop.Count, leftLoop.Count));    // Part 1 - 251029473
             Console.WriteLine(0);    // Part 2 - 251003917
 
@@ -147,27 +150,62 @@ namespace solutions
 
         public static Point getNextPipe(char[,] grid, Point curr, char[] pipes, List<Point> usedPoints)
         {
+            char currSymbol = grid[curr.X, curr.Y];
+
             Point coord = new Point(-1, -1);
 
             for (int i = -1; i <= 1; i++)
             {
                 for (int j = -1; j <= 1; j++)
                 {
+                    if (i == j || (i == -1  && j == 1) || (i == 1 && j == -1))
+                    {
+                        continue;
+                    }
+
+                    if (currSymbol == '|' && j != 0)
+                    {
+                        continue;
+                    }
+                    if (currSymbol == '-' && i != 0)
+                    {
+                        continue;
+                    }
+                    if (currSymbol == 'L' && ((j != 0 && i != -1) && (j != 1 && i != 0)))
+                    {
+                        continue;
+                    }
+                    if (currSymbol == 'J' && ((j != 1 && i != 0) && (j != 0 && i != 1)))
+                    {
+                        continue;
+                    }
+                    if (currSymbol == '7' && ((j != -1 && i != 0) && (j != 0 && i != 1)))
+                    {
+                        continue;
+                    }
+                    if (currSymbol == 'F' && ((j != 0 && i != -1) && (j != -1 && i != 0)))
+                    {
+                        continue;
+                    }
+
                     coord = new Point(curr.X + i, curr.Y + j);
                     if (pipes.Contains(grid[coord.X, coord.Y]))
                     {
                         if (i == 0 && j == 0)
                         {
+                            coord = new Point(-1, -1);
                             continue;
                         }
-                        char symbol = grid[coord.X, coord.Y];
+                        char newSymbol = grid[coord.X, coord.Y];
 
-                        if (!isValidPipe(symbol, i, j))
+                        if (!isValidPipe(newSymbol, i, j))
                         {
+                            coord = new Point(-1, -1);
                             continue;
                         }
                         if (usedPoints.Contains(coord))
                         {
+                            coord = new Point(-1, -1);
                             continue;
                         }
                         //rightLoop.Add(coord);
