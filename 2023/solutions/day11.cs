@@ -18,10 +18,22 @@ namespace solutions
             List<string> lines = Helper.get_input("day11_input.txt");
             //List<string> lines = Helper.get_input("day11_sample_input.txt");
 
-            char[,] grid = getGrid(lines);
+            int numberRows = lines.Count;
+            int numberCols = lines[0].Length;
 
-            int numberRows = grid.GetLength(0);
-            int numberCols = grid.GetLength(1);
+            char[,] grid = new char[numberRows, numberCols];
+
+            for (int i = 0; i < numberRows; i++)
+            {
+                for (int j = 0; j < numberCols; j++)
+                {
+                    grid[i, j] = lines[i][j];
+                }
+            }
+
+            List<int> emptyRows = getEmptyRows(lines);
+            List<int> emptyCols = getEmptyCols(lines);
+
 
             List<Galaxy> galaxies = new List<Galaxy>();
             int numberGalaxies = 0;
@@ -42,24 +54,29 @@ namespace solutions
 
             foreach (var i in galaxies)
             {
-                Console.WriteLine(i);
+                //Console.WriteLine(i);
             }
 
-            int totalDistances = 0;
+            long totalDistances = 0;
+            //int emptyOffset = 2; // Part 1 
+            int emptyOffset = 1000000; // Part 2 
 
             for (int i = 0; i < galaxies.Count; i++)
             {
-                for (int j = i; j < galaxies.Count; j++)
+                for (int j = i + 1; j < galaxies.Count; j++)
                 {
-                    totalDistances += getShortestDistance(galaxies[i], galaxies[j]);
+                    int totalDistance = getShortestDistance(galaxies[i], galaxies[j], emptyRows, emptyCols, emptyOffset);
+                    //Console.WriteLine(totalDistance);
+                    totalDistances += totalDistance;
                 }
             }
-
-            Console.WriteLine(totalDistances); // 9599070
+        
+            //Console.WriteLine(totalDistances); // Part 1 - 9599070
+            Console.WriteLine(totalDistances); // Part 2 - 842645913794
 
         }
 
-        public static int getShortestDistance(Galaxy g1, Galaxy g2)
+        public static int getShortestDistance(Galaxy g1, Galaxy g2, List<int> emptyRows, List<int> emptyCols, int emptyOffset)
         {
             int totalDistance = 0;
 
@@ -71,7 +88,13 @@ namespace solutions
                 while (x != g2.RowNum)
                 {
                     x--;
-                    totalDistance++;
+                    if (emptyRows.Contains(x))
+                    {
+                        totalDistance += emptyOffset;
+                    } else
+                    {
+                        totalDistance++;
+                    }                    
                 }
             }
             else
@@ -79,7 +102,14 @@ namespace solutions
                 while (x != g2.RowNum)
                 {
                     x++;
-                    totalDistance++;
+                    if (emptyRows.Contains(x))
+                    {
+                        totalDistance += emptyOffset;
+                    }
+                    else
+                    {
+                        totalDistance++;
+                    }
                 }
             }
 
@@ -88,7 +118,14 @@ namespace solutions
                 while (y != g2.ColNum)
                 {
                     y--;
-                    totalDistance++;
+                    if (emptyCols.Contains(y))
+                    {
+                        totalDistance += emptyOffset;
+                    }
+                    else
+                    {
+                        totalDistance++;
+                    }
                 }
             }
             else
@@ -96,22 +133,25 @@ namespace solutions
                 while (y != g2.ColNum)
                 {
                     y++;
-                    totalDistance++;
+                    if (emptyCols.Contains(y))
+                    {
+                        totalDistance += emptyOffset;
+                    }
+                    else
+                    {
+                        totalDistance++;
+                    }
                 }
             }
             return totalDistance;
         }
 
-
-        public static char[,] getGrid(List<string> lines)
+        public static List<int> getEmptyRows(List<string> lines)
         {
             int numberRows = lines.Count;
-            int numberCols = lines[0].Length;
-
             List<int> emptyRows = new List<int>();
-            List<int> emptyCols = new List<int>();
 
-            // populate grid, check for empty rows 
+            // check for empty rows 
             for (int i = 0; i < numberRows; i++)
             {
                 string line = lines[i];
@@ -120,6 +160,13 @@ namespace solutions
                     emptyRows.Add(i);
                 }
             }
+            return emptyRows;
+        }
+        public static List<int> getEmptyCols(List<string> lines)
+        {
+            int numberRows = lines.Count;
+            int numberCols = lines[0].Length;
+            List<int> emptyCols = new List<int>();
 
             // check for empty cols 
             for (int i = 0; i < numberCols; i++)
@@ -136,46 +183,7 @@ namespace solutions
                 }
             }
 
-            numberRows += emptyRows.Count;
-            numberCols += emptyCols.Count;
-
-            string emptyRow = new string('.', numberCols);
-
-            int count = 0;
-            foreach (var i in emptyRows)
-            {
-                lines.Insert(i + count, emptyRow);
-                count++;
-            }
-
-            count = 0;
-            foreach (var i in emptyCols)
-            {
-                for (int j = 0; j < numberRows; j++)
-                {
-                    lines[j] = lines[j].Insert(i+count, ".");
-                }
-                count++;
-            }
-
-            /*
-            for (int i = 0; i < lines.Count; i++)
-            {
-                Console.WriteLine(lines[i]);
-            }*/
-
-
-            char[,] grid = new char[numberRows, numberCols];
-
-            for (int i = 0; i < numberRows; i++)
-            {
-                for (int j = 0; j < numberCols; j++)
-                {
-                    grid[i, j] = lines[i][j];
-                }
-            }
-
-            return grid;
+            return emptyCols;
         }
 
     }
