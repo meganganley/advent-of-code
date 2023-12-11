@@ -15,8 +15,9 @@ namespace solutions
     {
         public static void Run()
         {
-            List<string> lines = Helper.get_input("day10_input.txt");
-            //List<string> lines = Helper.get_input("day10_sample_input.txt");
+            //List<string> lines = Helper.get_input("day10_input.txt");
+            List<string> lines = Helper.get_input("day10_sample_input.txt");
+            //List<string> lines = Helper.get_input("day10_sample_input_2.txt");
 
             char[] pipes = ['|', '-', 'L', 'J', '7', 'F'];
    
@@ -28,11 +29,18 @@ namespace solutions
 
             char[,] grid = CreateEmptyGrid(lines);
 
-            for (int x = 0; x < numCols; x++)
+            for (int x = 0; x < numRows; x++)
             {
-                for (int y = 0; y < numRows; y++)
+                for (int y = 0; y < numCols; y++)
                 {
-                    Console.Write(grid[x, y]);
+                    if (grid[x, y] == '.')
+                    {
+                        Console.Write(grid[x, y]);
+                    } else
+                    {
+                        Console.Write(" ");
+                    }                    
+                                       
                 }
                 Console.WriteLine();
             }
@@ -44,46 +52,46 @@ namespace solutions
             List<Point> usedPoints = new List<Point>();
 
             // populate with input
-            for (int y = 1; y <= numFilledRows; y++)
+            for (int x = 1; x <= numFilledRows; x++)
             {
-                for (int x = 1; x <= numFilledCols; x++)
+                for (int y = 1; y <= numFilledCols; y++)
                 {
-                    grid[x, y] = lines[y - 1][x - 1];
-                    if (grid[x, y] == 'S')
+                    grid[x,y] = lines[x - 1][y - 1];
+                    if (grid[x,y] == 'S')
                     {
-                        start = new Point(x, y);
+                        start = new Point(x, y); // x = col number (position on x axis), y = row number (position on y axis)
                         usedPoints.Add(start);
                     }
                 }
             }
 
-            // get the two next points
+            // get the two first points
             for (int i = -1; i <= 1; i++)
             {
                 for (int j = -1; j <= 1; j++)
                 {
-                    if(pipes.Contains(grid[start.X+j, start.Y+i]))
+                    if(pipes.Contains(grid[start.X+i, start.Y+j]))
                     {
                         if ( i == 0 && j == 0 )
                         {
                             continue;
                         }
-                        char symbol = grid[start.X+j, start.Y+i];
+                        char symbol = grid[start.X+i, start.Y+j];
          
-                        if (!isValidNextPipe(symbol, j, i))
+                        if (!isValidNextPipe(symbol,i,j))
                         {
                             continue;
                         }
 
                         if (!leftLoop.Any())
                         {
-                            Point leftStart = new Point(start.X+j, start.Y+i);
+                            Point leftStart = new Point(start.X+i, start.Y+j);
                             leftLoop.Add(leftStart);
                             usedPoints.Add(leftStart);
                         }
                         else
                         {
-                            Point rightStart = new Point(start.X+j, start.Y+i);
+                            Point rightStart = new Point(start.X+i, start.Y+j);
                             rightLoop.Add(rightStart);
                             usedPoints.Add(rightStart);
                         }
@@ -372,17 +380,12 @@ namespace solutions
 
             for (int i = 0; i < numRows; i++)
             {
-                grid[i, 0] = '.';
-                grid[i, numCols - 1] = '.';
+                for (int j = 0; j < numCols; j++)
+                {
+                    grid[i, j] = '.';
+                }
+                   
             }
-
-            for (int i = 0; i < numCols; i++)
-            {
-                grid[0, i] = '.';
-                grid[numRows - 1, i] = '.';
-            }
-
-            //grid[x, y] = lines[y - 1][x - 1];
             return grid;
         }
     }
