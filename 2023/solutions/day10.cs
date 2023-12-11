@@ -15,8 +15,8 @@ namespace solutions
     {
         public static void Run()
         {
-            //List<string> lines = Helper.get_input("day10_input.txt");
-            List<string> lines = Helper.get_input("day10_sample_input.txt");
+            List<string> lines = Helper.get_input("day10_input.txt");
+            //List<string> lines = Helper.get_input("day10_sample_input.txt");
             //List<string> lines = Helper.get_input("day10_sample_input_2.txt");
 
             char[] pipes = ['|', '-', 'L', 'J', '7', 'F'];
@@ -28,22 +28,6 @@ namespace solutions
             int numCols = numFilledCols + 2;
 
             char[,] grid = CreateEmptyGrid(lines);
-
-            for (int x = 0; x < numRows; x++)
-            {
-                for (int y = 0; y < numCols; y++)
-                {
-                    if (grid[x, y] == '.')
-                    {
-                        Console.Write(grid[x, y]);
-                    } else
-                    {
-                        Console.Write(" ");
-                    }                    
-                                       
-                }
-                Console.WriteLine();
-            }
 
             Point start = new Point(0,0);
 
@@ -64,6 +48,16 @@ namespace solutions
                     }
                 }
             }
+
+            /*
+            for (int x = 0; x < numRows; x++)
+            {
+                for (int y = 0; y < numCols; y++)
+                {
+                    Console.Write(grid[x, y]);
+                }
+                Console.WriteLine();
+            }*/
 
             // get the two first points
             for (int i = -1; i <= 1; i++)
@@ -127,61 +121,46 @@ namespace solutions
                 usedPoints.Add(next);
 
                 forceStop++;
-                
-                /*if(forceStop > 10)
-                {
-                    keepLooping = false;
-                }*/
+            }
 
+            int farthestPipe = Math.Max(rightLoop.Count, leftLoop.Count);
+            Console.WriteLine(farthestPipe);    // Part 1 - 6640
+
+            // create list in order for input as 'polygon'
+            rightLoop.Reverse();
+            leftLoop.AddRange(rightLoop);
+            leftLoop.Insert(0, start);
+
+
+            PointF[] usedPointF = new PointF[leftLoop.Count];
+
+            for (int i = 0; i < leftLoop.Count; i++)
+            {
+                usedPointF[i] = new PointF(leftLoop[i].X, leftLoop[i].Y);
             }
 
             int tilesEnclosed = 0;
-
-            for (int y = 1; y <= numFilledRows; y++)
+            for (int x = 1; x <= numFilledCols; x++)                
             {
-                for (int x = 1; x <= numFilledCols; x++)
+                for (int y = 1; y <= numFilledRows; y++)
                 {
                     // part of the pipe - don't count for enclosed
                     if (usedPoints.Contains(new Point(x, y)))
                     {
                         continue;
-                    } else if (IsPointInPolygon4(usedPoints.ToArray(), new Point(x, y)))
+
+                    } else if (IsPointInPolygon4(usedPointF, new PointF(x, y)))
                     {
                         tilesEnclosed++;
                     }
                 }
             }
 
-            /*
-            foreach (var item in leftLoop)
-            {
-                Console.WriteLine(item.X + " " + item.Y);
-            }
-            Console.WriteLine();
-            foreach (var item in rightLoop)
-            {
-                Console.WriteLine(item.X + " " + item.Y);
-            }*/
-
-            // print grid
-            /*
-            
-
-            for (int y = 0; y < numRows; y++)
-            {
-                for (int x = 0; x < numCols; x++)
-                {
-                    Console.Write(grid[x, y]);
-                }
-                Console.WriteLine();
-            }  */
-
-            Console.WriteLine(Math.Max(rightLoop.Count, leftLoop.Count));    // Part 1 - 6640
-            Console.WriteLine(tilesEnclosed);    // Part 2 - 251003917
+            Console.WriteLine(tilesEnclosed);    // Part 2 - 411
 
         }
 
-        public static bool IsPointInPolygon4(Point[] polygon, Point testPoint)
+        public static bool IsPointInPolygon4(PointF[] polygon, PointF testPoint)
         {
             bool result = false;
             int j = polygon.Length - 1;
@@ -202,46 +181,6 @@ namespace solutions
             return result;
         }
 
-        public static bool IsInPolygon(Point[] poly, Point p)
-        {
-            Point p1, p2;
-            bool inside = false;
-
-            if (poly.Length < 3)
-            {
-                return inside;
-            }
-
-            var oldPoint = new Point(
-                poly[poly.Length - 1].X, poly[poly.Length - 1].Y);
-
-            for (int i = 0; i < poly.Length; i++)
-            {
-                var newPoint = new Point(poly[i].X, poly[i].Y);
-
-                if (newPoint.X > oldPoint.X)
-                {
-                    p1 = oldPoint;
-                    p2 = newPoint;
-                }
-                else
-                {
-                    p1 = newPoint;
-                    p2 = oldPoint;
-                }
-
-                if ((newPoint.X < p.X) == (p.X <= oldPoint.X)
-                    && (p.Y - (long)p1.Y) * (p2.X - p1.X)
-                    < (p2.Y - (long)p1.Y) * (p.X - p1.X))
-                {
-                    inside = !inside;
-                }
-
-                oldPoint = newPoint;
-            }
-
-            return inside;
-        }
 
         public static bool isTileEnclosed(List<Point> usedPoints, int x, int y)
         {
@@ -279,28 +218,25 @@ namespace solutions
                     }
 
                     // Valid next index
-                    if (!isValidNextIndex(currSymbol, j, i)){
+                    if (!isValidNextIndex(currSymbol, i, j)){
                         continue;
                     }
 
-                    coord = new Point(curr.X+j, curr.Y+i);
+                    coord = new Point(curr.X+i, curr.Y+j);
                     if (pipes.Contains(grid[coord.X, coord.Y]))
                     {
                         if (i == 0 && j == 0)
                         {
-                            coord = new Point(-1, -1);
                             continue;
                         }
                         char newSymbol = grid[coord.X, coord.Y];
 
-                        if (!isValidNextPipe(newSymbol, j, i))
+                        if (!isValidNextPipe(newSymbol, i, j))
                         {
-                            coord = new Point(-1, -1);
                             continue;
                         }
                         if (usedPoints.Contains(coord))
                         {
-                            coord = new Point(-1, -1);
                             continue;
                         }
                         return coord;
@@ -313,15 +249,15 @@ namespace solutions
         public static bool isValidNextPipe(char nextSymbol, int x, int y)
         {
             bool isValid = false;
-            if (nextSymbol == '|' && x == 0 && (y == 1 || y == -1))
+            if (nextSymbol == '|' && y == 0 && (x == 1 || x == -1))
             {
                 isValid = true;
             }
-            if (nextSymbol == '-' && y == 0 && (x == 1 || x == -1))
+            if (nextSymbol == '-' && x == 0 && (y == 1 || y == -1))
             {
                 isValid = true;
             }
-            if (nextSymbol == 'L' && ((x == -1 && y == 0) || (x == 0 && y == 1)))
+            if (nextSymbol == 'L' && ((x == 0 && y == -1) || (x == 1 && y == 0)))
             {
                 isValid = true;
             }
@@ -329,7 +265,7 @@ namespace solutions
             {
                 isValid = true;
             }
-            if (nextSymbol == '7' && ((x == 0 && y == -1) || (x == 1 && y == 0)))
+            if (nextSymbol == '7' && ((x == -1 && y == 0) || (x == 0 && y == 1)))
             {
                 isValid = true;
             }
@@ -342,15 +278,15 @@ namespace solutions
         public static bool isValidNextIndex(char currSymbol, int x, int y)
         {
             bool isValid = false;
-            if (currSymbol == '|' && x == 0 && (y == 1 || y == -1))
+            if (currSymbol == '|' && y == 0 && (x == 1 || x == -1))
             {
                 isValid = true;
             }
-            if (currSymbol == '-' && y == 0 && ( x == 1 || x == -1 ))
+            if (currSymbol == '-' && x == 0 && ( y == 1 || y == -1 ))
             {
                 isValid = true;
             }
-            if (currSymbol == 'L' && ((x == 0 && y == -1) || (x == 1 && y == 0)))
+            if (currSymbol == 'L' && ((x == -1 && y == 0) || (x == 0 && y == 1)))
             {
                 isValid = true;
             }
@@ -358,7 +294,7 @@ namespace solutions
             {
                 isValid = true; 
             }
-            if (currSymbol == '7' && ((x == -1 && y == 0) || (x == 0 && y == 1)))
+            if (currSymbol == '7' && ((x == 0 && y == -1) || (x == 1 && y == 0)))
             {
                 isValid = true;
             }
